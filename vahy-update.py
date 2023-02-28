@@ -15,7 +15,7 @@ if __name__=="__main__":
         Atb = A.transpose() @ m
 
         koef = np.linalg.solve(AtA, Atb)
-        err = np.linalg.norm(A@koef-h)/len(h) # chyba vztazena na pocet prvku
+        err = np.linalg.norm(A@koef-m)/len(h) # chyba vztazena na pocet prvku
         print(f"ORDER:{order}")
         print(f" Koeficienty {koef}")
         print(f"MSE:{err}")
