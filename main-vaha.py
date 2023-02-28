@@ -13,7 +13,7 @@ if __name__=="__main__":
     Atb = A.transpose() @ m
 
     koef = np.linalg.solve(AtA, Atb)
-    err = np.linalg.norm(A@koef-h)/len(h) # chyba vztazena na pocet prvku
+    err = np.linalg.norm(A@koef-m)/len(h) # chyba vztazena na pocet prvku
     print(f" Koeficienty {koef}")
     print(f"MSE:{err}")
     x_graf = np.linspace(min(h), max(h), 200)
