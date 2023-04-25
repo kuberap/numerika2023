@@ -1,5 +1,6 @@
 import cmath
 import math
+import warnings
 
 import numpy as np
 import random
@@ -40,11 +41,38 @@ def get_x0(R1,R2, cplx=True):
         else:
             return -R
 
+def poly_solve(p, MAX_ATTEPMTS=10, NEWTON_MAXITER=100, TOL=1e-8, MINDF=1e-7, CTOL=1e-8):
+    roots = []
+    n = len(p) -1 # kolik budu hledat korenu
+    for attempt in range(MAX_ATTEPMTS):
+        x0 = get_x0(*pbounds(p))
+        root, px = newton(p, x0, NEWTON_MAXITER,TOL, MINDF)
+        if abs(px) < TOL: # kdyz je to skoro nula - koren to naslo
+            # kdyz je koren realny
+            print(root)
+            if abs(root.imag)<CTOL: # tedy komplexni je skoro nula
+                roots.append(root)
+                p = np.polydiv(p, [1, -root.real])[0]  # kdyz to ten koren naslo, tak del p/(1*x-koren)
+                # print(f"REAL")
+                # print(f"{attempt}-->{root}")
+                # print(f"{attempt}p-->{p}")
+            else: #koren je komplexni
+                roots.append(root)
+                roots.append(root.conjugate())
+                dp = np.polymul([1,-root],[1, -root.conjugate()])
+                p = np.polydiv(p, dp)[0]
+                # print(f"COMPLEX")
+                # print(f"{attempt}-->{root}===={root.conjugate()}")
+                # print(f"{attempt}dp-->{dp}")
+                # print(f"{attempt}p-->{dp}")
+            if len(roots) == n: # kdyz jsem nasel n korenu
+                return roots
+
+    return roots
+
 
 if __name__=="__main__":
     p = [4,-6,9,-12]
-    x0 = get_x0(*pbounds(p))
-    x,px = newton(p,x0)
-    print(x)
-    print(px)
+    roots = poly_solve(p)
+    print(roots)
 
