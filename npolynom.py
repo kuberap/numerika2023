@@ -4,22 +4,24 @@ import math
 import numpy as np
 import random
 #
-# def newton(f,x0, maxiter=100, TOL=1e-6, H=1e-6, MINDF=1e-7):
-#     def derffce(f,x):
-#         return (f(x+H)-f(x-H))/(2*H)
-#     x=x0
-#     fx = f(x)
-#     for i in range(maxiter):
-#         df = derffce(f,x)
-#         assert  math.fabs(df)> MINDF, f"Nulová derivace v bodě {x}\t{df}"
-#         xnew=x-fx/df
-#         fx = f(xnew)
-#         print(f"Iterace:{i}-->{xnew}:f(x)={fx}")
-#         if math.fabs(x-xnew)<TOL or math.fabs(fx)<TOL:
-#             return xnew, fx
-#         x=xnew
-#
-#     return x, fx
+def newton(p,x0, maxiter=100, TOL=1e-8, MINDF=1e-7):
+    n = len(p)-1
+    dp = [ (n-i)*v for i,v in enumerate(p[:-1])]
+    f = lambda x: np.polyval(p,x)
+    derffce = lambda x: np.polyval(dp,x)
+    x=x0
+    fx = f(x)
+    for i in range(maxiter):
+        df = derffce(x)
+        assert  abs(df)> MINDF, f"Nulová derivace v bodě {x}\t{df}"
+        xnew=x-fx/df
+        fx = f(xnew)
+        # print(f"Iterace:{i}-->{xnew}:f(x)={fx}")
+        if abs(x-xnew)<TOL or abs(fx)<TOL:
+            return xnew, fx
+        x=xnew
+
+    return x, fx
 
 def pbounds(p):
     assert len(p)>1," Polynom musi byt stupne nejmene 1"
@@ -39,10 +41,10 @@ def get_x0(R1,R2, cplx=True):
             return -R
 
 
-
-
-
 if __name__=="__main__":
     p = [4,-6,9,-12]
-    x0= get_x0(*pbounds(p),False)
-    print(x0)
+    x0 = get_x0(*pbounds(p))
+    x,px = newton(p,x0)
+    print(x)
+    print(px)
+
